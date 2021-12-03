@@ -333,6 +333,7 @@ extern "C"
 /* Return a pointer to the thread specific errno. */
 
 FAR int *__errno(void);
+FAR int *get_errno_ptr(void);
 
 #undef EXTERN
 #if defined(__cplusplus)

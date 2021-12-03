@@ -59,3 +59,7 @@ FAR int *__errno(void)
 
   return &tlsinfo->tl_errno;
 }
+
+FAR int *get_errno_ptr(void){
+  return __errno();
+}
