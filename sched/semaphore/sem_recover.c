@@ -30,6 +30,7 @@
 
 #include <nuttx/irq.h>
 #include <nuttx/arch.h>
+#include <nuttx/itm/itm.h>
 #include <nuttx/sched.h>
 #include <nuttx/mm/kmap.h>
 
@@ -121,6 +122,7 @@ void nxsem_recover(FAR struct tcb_s *tcb)
           DEBUGASSERT(atomic_read(NXSEM_COUNT(sem)) < 0);
           atomic_fetch_add(NXSEM_COUNT(sem), 1);
         }
+      EMDBG_LOG_SEMAPHORE_INCR(sem);
 
 #ifdef CONFIG_MM_KMAP
       kmm_unmap(sem);

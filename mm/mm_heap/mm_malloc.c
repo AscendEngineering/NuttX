@@ -35,7 +35,7 @@
 #include <nuttx/mm/kasan.h>
 #include <nuttx/sched.h>
 #include <nuttx/sched_note.h>
-
+#include <nuttx/itm/itm.h>
 #include "mm_heap/mm.h"
 
 /****************************************************************************
@@ -205,6 +205,7 @@ FAR void *mm_malloc(FAR struct mm_heap_s *heap, size_t size)
     {
       /* There must have been an integer overflow */
 
+      EMDBG_LOG_HEAP_MALLOC_RESULT(0);
       return NULL;
     }
 
@@ -212,6 +213,7 @@ FAR void *mm_malloc(FAR struct mm_heap_s *heap, size_t size)
 
   /* We need to hold the MM mutex while we muck with the nodelist. */
 
+  EMDBG_LOG_HEAP_MALLOC(size);
   DEBUGVERIFY(mm_lock(heap));
 
   /* Convert the request size into a nodelist index */
@@ -409,5 +411,6 @@ FAR void *mm_malloc(FAR struct mm_heap_s *heap, size_t size)
 #endif
 
   DEBUGASSERT(ret == NULL || ((uintptr_t)ret) % MM_ALIGN == 0);
+  EMDBG_LOG_HEAP_MALLOC_RESULT(ret);
   return ret;
 }

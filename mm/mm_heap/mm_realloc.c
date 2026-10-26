@@ -33,6 +33,7 @@
 #include <assert.h>
 
 #include <nuttx/mm/mm.h>
+#include <nuttx/itm/itm.h>
 #include <nuttx/mm/kasan.h>
 #include <nuttx/sched_note.h>
 
@@ -83,6 +84,8 @@ FAR void *mm_realloc(FAR struct mm_heap_s *heap, FAR void *oldmem,
     {
       return mm_malloc(heap, size);
     }
+
+  EMDBG_LOG_HEAP_MALLOC(size);
 
   DEBUGASSERT(mm_heapmember(heap, oldmem));
 
@@ -161,7 +164,7 @@ FAR void *mm_realloc(FAR struct mm_heap_s *heap, FAR void *oldmem,
 
       mm_unlock(heap);
       MM_ADD_BACKTRACE(heap, oldnode);
-
+      EMDBG_LOG_HEAP_REALLOC(oldmem, size, oldmem);
       return oldmem;
     }
 
@@ -404,7 +407,7 @@ FAR void *mm_realloc(FAR struct mm_heap_s *heap, FAR void *oldmem,
 
           memcpy(newmem, oldmem, oldsize - MM_ALLOCNODE_OVERHEAD);
         }
-
+      EMDBG_LOG_HEAP_REALLOC(oldmem, size, newmem);
       return newmem;
     }
 
@@ -426,6 +429,7 @@ FAR void *mm_realloc(FAR struct mm_heap_s *heap, FAR void *oldmem,
           mm_free(heap, oldmem);
         }
 
+      EMDBG_LOG_HEAP_REALLOC(oldmem, size, newmem);
       return newmem;
     }
 }

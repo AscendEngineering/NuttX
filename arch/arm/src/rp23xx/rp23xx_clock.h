@@ -59,6 +59,7 @@ extern "C"
  ****************************************************************************/
 
 void rp23xx_clockconfig(void);
+uint32_t rp23xx_get_sysclock(void);
 
 #undef EXTERN
 #if defined(__cplusplus)

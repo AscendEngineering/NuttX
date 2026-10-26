@@ -394,10 +394,16 @@ void clocks_init(void)
  * Public Functions
  ****************************************************************************/
 
+uint32_t rp23xx_get_sysclock(void)
+{
+  return rp23xx_clock_freq[RP23XX_CLOCKS_NDX_SYS];
+}
+
 /****************************************************************************
  * Name: rp23xx_clockconfig
  *
  * Description:
+
  *   Called to establish the clock settings based on the values in board.h.
  *
  * Input Parameters:

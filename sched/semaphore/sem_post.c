@@ -32,6 +32,7 @@
 
 #include <nuttx/irq.h>
 #include <nuttx/arch.h>
+#include <nuttx/itm/itm.h>
 
 #include "sched/sched.h"
 #include "semaphore/semaphore.h"
@@ -139,6 +140,8 @@ int nxsem_post_slow(FAR sem_t *sem)
                                          sem_count + 1));
       blocking = sem_count < 0;
     }
+
+  EMDBG_LOG_SEMAPHORE_INCR(sem);
 
   /* Perform the semaphore unlock operation, releasing this task as a
    * holder then also incrementing the count on the semaphore.

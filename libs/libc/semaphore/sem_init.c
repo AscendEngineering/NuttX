@@ -32,6 +32,7 @@
 #include <errno.h>
 
 #include <nuttx/semaphore.h>
+#include <nuttx/itm/itm.h>
 
 /****************************************************************************
  * Public Functions
@@ -138,6 +139,8 @@ int sem_init(FAR sem_t *sem, int pshared, unsigned int value)
       set_errno(-ret);
       ret = ERROR;
     }
+
+  EMDBG_LOG_SEMAPHORE_INIT(sem);
 
   return ret;
 }

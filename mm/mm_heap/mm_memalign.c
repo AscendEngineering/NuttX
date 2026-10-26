@@ -30,6 +30,7 @@
 #include <debug.h>
 
 #include <nuttx/mm/mm.h>
+#include <nuttx/itm/itm.h>
 #include <nuttx/mm/kasan.h>
 #include <nuttx/sched_note.h>
 
@@ -290,5 +291,6 @@ FAR void *mm_memalign(FAR struct mm_heap_s *heap, size_t alignment,
   DEBUGASSERT(alignedchunk % alignment == 0);
   minfo("Aligned %"PRIxPTR" to %"PRIxPTR", size %zu\n",
         rawchunk, alignedchunk, size);
+  EMDBG_LOG_HEAP_MEMALIGN(rawchunk, size, alignedchunk);
   return (FAR void *)alignedchunk;
 }

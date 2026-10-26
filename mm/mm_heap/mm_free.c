@@ -32,6 +32,7 @@
 #include <nuttx/arch.h>
 #include <nuttx/sched.h>
 #include <nuttx/mm/mm.h>
+#include <nuttx/itm/itm.h>
 #include <nuttx/mm/kasan.h>
 #include <nuttx/sched_note.h>
 
@@ -253,4 +254,5 @@ void mm_free(FAR struct mm_heap_s *heap, FAR void *mem)
 #endif
 
   mm_delayfree(heap, mem, CONFIG_MM_FREE_DELAYCOUNT_MAX > 0);
+  EMDBG_LOG_HEAP_FREE(mem);
 }

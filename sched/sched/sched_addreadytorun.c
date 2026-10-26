@@ -27,6 +27,7 @@
 #include <nuttx/config.h>
 
 #include <stdbool.h>
+#include <nuttx/itm/itm.h>
 #include <assert.h>
 
 #include "irq/irq.h"
@@ -112,6 +113,7 @@ bool nxsched_add_readytorun(FAR struct tcb_s *btcb)
       ret = false;
     }
 
+  if (!ret) EMDBG_LOG_TASK_RUNNABLE(btcb);
   return ret;
 }
 
@@ -269,6 +271,7 @@ bool nxsched_add_readytorun(FAR struct tcb_s *btcb)
         }
     }
 
+  if (!doswitch) EMDBG_LOG_TASK_RUNNABLE(btcb);
   return doswitch;
 }
 

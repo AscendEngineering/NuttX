@@ -170,15 +170,13 @@ static int rp23xx_gpio_interrupt(int irq, void *context, void *arg)
 
   for (i = 0; i < 6; i++)
     {
-      /* Get and clear pending GPIO interrupt status */
+      /* Get pending GPIO interrupt status */
 
       stat = getreg32(RP23XX_IO_BANK0_PROC_INTS(i * 8, 0));
       if (i == 3)
         {
           stat &= 0x00ffffff;     /* Clear reserved bits */
         }
-
-      putreg32(stat, RP23XX_IO_BANK0_INTR(i * 8));
 
       while (stat != 0)
         {
@@ -199,6 +197,9 @@ static int rp23xx_gpio_interrupt(int irq, void *context, void *arg)
                     {
                       handler(gpio, context, g_gpio_irq_args[gpio]);
                     }
+
+                  /* Clear the interrupt for this specific pin after the handler has run */
+                  putreg32(0xf << (j * 4), RP23XX_IO_BANK0_INTR(i * 8));
                 }
             }
         }

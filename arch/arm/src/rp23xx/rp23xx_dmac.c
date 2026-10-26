@@ -37,6 +37,7 @@
 #include <nuttx/arch.h>
 #include <nuttx/mutex.h>
 #include <nuttx/semaphore.h>
+#include <nuttx/itm/itm.h>
 
 #include "arm_internal.h"
 #include "hardware/rp23xx_dma.h"
@@ -58,6 +59,7 @@ struct dma_channel_s
   bool           inuse;         /* TRUE: The DMA channel is in use */
   dma_callback_t callback;      /* Callback invoked when the DMA completes */
   void          *arg;           /* Argument passed to callback function */
+  uint32_t ctrl;
 };
 
 /* This structure describes the state of the DMA controller */
@@ -106,7 +108,6 @@ static int rp23xx_dmac_interrupt(int irq, void *context, void *arg)
   int result = OK;
   unsigned int ch;
   uint32_t stat;
-  uint32_t ctrl;
 
   /* Get and clear pending DMA interrupt status */
 
@@ -117,18 +118,17 @@ static int rp23xx_dmac_interrupt(int irq, void *context, void *arg)
     {
       ch = ffs(stat) - 1;
       stat &= ~(1 << ch);
+      dmach = &g_dmach[ch];
 
-      ctrl = getreg32(RP23XX_DMA_CTRL_TRIG(ch));
+      dmach->ctrl = getreg32(RP23XX_DMA_CTRL_TRIG(ch));
 
-      if (ctrl & RP23XX_DMA_CTRL_TRIG_AHB_ERROR)
+      if (dmach->ctrl & RP23XX_DMA_CTRL_TRIG_AHB_ERROR)
         {
           setbits_reg32(RP23XX_DMA_CTRL_TRIG_READ_ERROR |
                         RP23XX_DMA_CTRL_TRIG_WRITE_ERROR,
                         RP23XX_DMA_CTRL_TRIG(ch));
           result = EIO;
         }
-
-      dmach = &g_dmach[ch];
 
       /* Call the DMA completion callback */
 
@@ -137,6 +137,8 @@ static int rp23xx_dmac_interrupt(int irq, void *context, void *arg)
           dmach->callback((DMA_HANDLE)dmach, result, dmach->arg);
           dmach->callback = NULL;
         }
+
+      EMDBG_LOG_DMA_STOP(dmach);
 
       dmach->arg = NULL;
     }
@@ -253,6 +255,8 @@ DMA_HANDLE rp23xx_dmachannel(void)
   setbits_reg32(bit, RP23XX_DMA_INTS0);
   setbits_reg32(bit, RP23XX_DMA_INTE0);
 
+  emdbg_itm8_block(EMDBG_DMA_START, ((uint8_t)dmach->ctrl << 5) | (uint8_t)dmach->chan);
+
   /* Since we have reserved a DMA descriptor by taking a count from chansem,
    * it would be a serious logic failure if we could not find a free channel
    * for our use.
@@ -332,7 +336,6 @@ void rp23xx_rxdmasetup(DMA_HANDLE handle, uintptr_t paddr, uintptr_t maddr,
   unsigned int ch;
   uint32_t count;
   uint32_t mask;
-  uint32_t ctrl;
 
   DEBUGASSERT(dmach != NULL && dmach->inuse);
   ch  = dmach->chan;
@@ -351,7 +354,7 @@ void rp23xx_rxdmasetup(DMA_HANDLE handle, uintptr_t paddr, uintptr_t maddr,
   putreg32(maddr & ~mask, RP23XX_DMA_WRITE_ADDR(ch));
   putreg32(count, RP23XX_DMA_TRANS_COUNT(ch));
 
-  ctrl = RP23XX_DMA_CTRL_TRIG_READ_ERROR |
+  dmach->ctrl = RP23XX_DMA_CTRL_TRIG_READ_ERROR |
          RP23XX_DMA_CTRL_TRIG_WRITE_ERROR |
          ((config.dreq << RP23XX_DMA_CTRL_TRIG_TREQ_SEL_SHIFT) &
           RP23XX_DMA_CTRL_TRIG_TREQ_SEL_MASK) |
@@ -361,10 +364,11 @@ void rp23xx_rxdmasetup(DMA_HANDLE handle, uintptr_t paddr, uintptr_t maddr,
 
   if (!config.noincr)
     {
-      ctrl |= RP23XX_DMA_CTRL_TRIG_INCR_WRITE;
+      dmach->ctrl |= RP23XX_DMA_CTRL_TRIG_INCR_WRITE;
     }
 
-  putreg32(ctrl, RP23XX_DMA_CTRL_TRIG(ch));
+  putreg32(dmach->ctrl, RP23XX_DMA_CTRL_TRIG(ch));
+  emdbg_itm_block(EMDBG_DMA_CONFIG, (uint32_t)handle);
 }
 
 /****************************************************************************
@@ -389,7 +393,6 @@ void rp23xx_txdmasetup(DMA_HANDLE handle, uintptr_t paddr, uintptr_t maddr,
   unsigned int ch;
   uint32_t count;
   uint32_t mask;
-  uint32_t ctrl;
 
   DEBUGASSERT(dmach != NULL && dmach->inuse);
   ch  = dmach->chan;
@@ -408,7 +411,7 @@ void rp23xx_txdmasetup(DMA_HANDLE handle, uintptr_t paddr, uintptr_t maddr,
   putreg32(paddr & ~mask, RP23XX_DMA_WRITE_ADDR(ch));
   putreg32(count, RP23XX_DMA_TRANS_COUNT(ch));
 
-  ctrl = RP23XX_DMA_CTRL_TRIG_READ_ERROR |
+  dmach->ctrl = RP23XX_DMA_CTRL_TRIG_READ_ERROR |
          RP23XX_DMA_CTRL_TRIG_WRITE_ERROR |
          ((config.dreq << RP23XX_DMA_CTRL_TRIG_TREQ_SEL_SHIFT) &
           RP23XX_DMA_CTRL_TRIG_TREQ_SEL_MASK) |
@@ -418,10 +421,11 @@ void rp23xx_txdmasetup(DMA_HANDLE handle, uintptr_t paddr, uintptr_t maddr,
 
   if (!config.noincr)
     {
-      ctrl |= RP23XX_DMA_CTRL_TRIG_INCR_READ;
+      dmach->ctrl |= RP23XX_DMA_CTRL_TRIG_INCR_READ;
     }
 
-  putreg32(ctrl, RP23XX_DMA_CTRL_TRIG(ch));
+  putreg32(dmach->ctrl, RP23XX_DMA_CTRL_TRIG(ch));
+  emdbg_itm_block(EMDBG_DMA_CONFIG, (uint32_t)handle);
 }
 
 /****************************************************************************
@@ -453,7 +457,6 @@ void rp23xx_ctrl_dmasetup(DMA_HANDLE           control,
   uint32_t              ctrl_ch;
   uint32_t              xfer_ch;
   uint32_t              xfer_reg_addr;
-  uint32_t              ctrl;
 
   DEBUGASSERT(ctrl_dmach && ctrl_dmach->inuse);
   DEBUGASSERT(xfer_dmach && xfer_dmach->inuse);
@@ -483,7 +486,7 @@ void rp23xx_ctrl_dmasetup(DMA_HANDLE           control,
    *    use un-paced transfer mode  TREQ_SEL = 0x3f
    */
 
-  ctrl = RP23XX_DMA_CTRL_TRIG_READ_ERROR
+  ctrl_dmach->ctrl = RP23XX_DMA_CTRL_TRIG_READ_ERROR
        | RP23XX_DMA_CTRL_TRIG_WRITE_ERROR
        | RP23XX_DMA_CTRL_TRIG_INCR_READ
        | RP23XX_DMA_CTRL_TRIG_INCR_WRITE
@@ -494,7 +497,7 @@ void rp23xx_ctrl_dmasetup(DMA_HANDLE           control,
        | (ctrl_ch << RP23XX_DMA_CTRL_TRIG_CHAIN_TO_SHIFT)
        | (0x3f << RP23XX_DMA_CTRL_TRIG_TREQ_SEL_SHIFT);
 
-  putreg32(ctrl, RP23XX_DMA_CTRL_TRIG(ctrl_ch));
+  putreg32(ctrl_dmach->ctrl, RP23XX_DMA_CTRL_TRIG(ctrl_ch));
 }
 
 /****************************************************************************
@@ -561,6 +564,7 @@ void rp23xx_dmastart(DMA_HANDLE handle, dma_callback_t callback, void *arg)
   /* Enable the channel */
 
   setbits_reg32(RP23XX_DMA_CTRL_TRIG_EN, RP23XX_DMA_CTRL_TRIG(ch));
+  EMDBG_LOG_DMA_START(dmach);
 }
 
 /****************************************************************************

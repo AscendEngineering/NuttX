@@ -35,6 +35,7 @@
 
 #include <nuttx/irq.h>
 #include <nuttx/arch.h>
+#include <nuttx/itm/itm.h>
 #include <arch/stm32h7/chip.h>
 
 #include "arm_internal.h"
@@ -139,6 +140,7 @@ struct stm32_dmach_s
   uint32_t       base;      /* DMA register channel base address */
   dma_callback_t callback;  /* Callback invoked when the DMA completes */
   void          *arg;       /* Argument passed to callback function */
+  stm32_dmacfg_t cfg;
 };
 
 typedef struct stm32_dmach_s *DMA_CHANNEL;
@@ -1138,6 +1140,7 @@ static void stm32_sdma_disable(DMA_CHANNEL dmachan)
     }
 
   dmabase_putreg(dmachan, regoffset, (DMA_STREAM_MASK << dmachan->shift));
+  EMDBG_LOG_DMA_STOP(dmachan);
 }
 
 /****************************************************************************
@@ -1224,6 +1227,7 @@ static int stm32_sdma_interrupt(int irq, void *context, void *arg)
     }
 
   dmabase_putreg(dmachan, regoffset, (status << dmachan->shift));
+  EMDBG_LOG_DMA_STOP(dmachan);
 
   /* Invoke the callback */
 
@@ -1417,6 +1421,7 @@ static void stm32_sdma_setup(DMA_HANDLE handle, stm32_dmacfg_t *cfg)
               DMA_SCR_PBURST_MASK | DMA_SCR_MBURST_MASK | DMA_SCR_TRBUFF);
   regval |= scr;
   dmachan_putreg(dmachan, STM32_DMA_SCR_OFFSET, regval);
+  EMDBG_LOG_DMA_CONFIGURE(dmachan, cfg);
 }
 
 /****************************************************************************
@@ -1495,6 +1500,8 @@ static void stm32_sdma_start(DMA_HANDLE handle, dma_callback_t callback,
     }
 
   dmachan_putreg(dmachan, STM32_DMA_SCR_OFFSET, scr);
+
+  EMDBG_LOG_DMA_START(dmachan);
 
   stm32_dmadump(handle, "DMA after start");
 }
@@ -1801,6 +1808,7 @@ static void stm32_bdma_disable(DMA_CHANNEL dmachan)
 
   dmabase_putreg(dmachan, STM32_BDMA_IFCR_OFFSET,
                    (BDMA_CHAN_MASK << dmachan->shift));
+  EMDBG_LOG_DMA_STOP(dmachan);
 }
 
 /****************************************************************************
@@ -1830,6 +1838,7 @@ static int stm32_bdma_interrupt(int irq, void *context, void *arg)
 
   dmabase_putreg(dmachan, STM32_BDMA_IFCR_OFFSET,
                  (status << dmachan->shift));
+  EMDBG_LOG_DMA_STOP(dmachan);
 
   /* Invoke the callback */
 
@@ -2000,6 +2009,7 @@ static void stm32_bdma_setup(DMA_HANDLE handle, stm32_dmacfg_t *cfg)
               BDMA_CCR_PL_MASK | BDMA_CCR_M2M | BDMA_CCR_DBM);
   regval |= ccr;
   dmachan_putreg(dmachan, STM32_BDMACH_CCR_OFFSET, regval);
+  EMDBG_LOG_DMA_CONFIGURE(dmachan, cfg);
 }
 
 /****************************************************************************
@@ -2033,6 +2043,7 @@ static void stm32_bdma_start(DMA_HANDLE handle, dma_callback_t callback,
 
   DEBUGASSERT(handle != NULL);
   DEBUGASSERT(dmachan->ctrl == BDMA);
+  EMDBG_LOG_DMA_START(dmachan);
 
   /* Save the callback info.  This will be invoked when the DMA completes */
 
@@ -2079,6 +2090,8 @@ static void stm32_bdma_start(DMA_HANDLE handle, dma_callback_t callback,
     }
 
   dmachan_putreg(dmachan, STM32_BDMACH_CCR_OFFSET, ccr);
+
+  EMDBG_LOG_DMA_START(dmachan);
 
   stm32_dmadump(handle, "DMA after start");
 }

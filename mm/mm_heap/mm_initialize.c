@@ -31,6 +31,7 @@
 #include <debug.h>
 
 #include <nuttx/sched_note.h>
+#include <nuttx/itm/itm.h>
 #include <nuttx/mm/mm.h>
 #include <nuttx/mm/kasan.h>
 
@@ -208,6 +209,7 @@ void mm_addregion(FAR struct mm_heap_s *heap, FAR void *heapstart,
   heap->mm_curused += 2 * MM_SIZEOF_ALLOCNODE;
   sched_note_heap(NOTE_HEAP_ADD, heap, heapstart, heapsize,
                   heap->mm_curused);
+  EMDBG_LOG_HEAP_ADDREGION(heapbase, heapend - heapbase);
   mm_unlock(heap);
 }
 
@@ -292,6 +294,7 @@ FAR struct mm_heap_s *mm_initialize(FAR const char *name,
 #  endif
 #endif
 
+  EMDBG_LOG_HEAP_INIT(heap);
   return heap;
 }
 

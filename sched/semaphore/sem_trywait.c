@@ -34,6 +34,7 @@
 #include <nuttx/init.h>
 #include <nuttx/irq.h>
 #include <nuttx/arch.h>
+#include <nuttx/itm/itm.h>
 
 #include "sched/sched.h"
 #include "semaphore/semaphore.h"
@@ -125,6 +126,7 @@ int nxsem_trywait_slow(FAR sem_t *sem)
   if (!mutex)
     {
       nxsem_add_holder(sem);
+      EMDBG_LOG_SEMAPHORE_DECR(sem);
     }
 
 out:
