@@ -103,9 +103,24 @@ const void * const _vectors[] locate_data(".vectors")
 
   start,
 
-  /* Vectors 2 - n point directly at the generic handler */
+  /* Vectors 2 - n point directly at the generic handler.
+   *
+   * Under SMP every peripheral interrupt also goes through
+   * exception_common, which saves the interrupted task's context before
+   * the handler runs.  exception_direct dispatches the handler first and
+   * leaves the save to the PendSV it triggers when the handler switched
+   * tasks; the handler releases the critical section before that PendSV
+   * runs, and in that window the other CPU can take the preempted task
+   * from g_readytorun with xcp.regs still NULL and dispatch a null
+   * context (seen on the RP2350 as a double fault with the ROM's first
+   * words in r4-r7).
+   */
 
+#ifdef CONFIG_SMP
+  [2 ... (15 + ARMV8M_PERIPHERAL_INTERRUPTS)] = &exception_common
+#else
   [2 ... NVIC_IRQ_PENDSV] = &exception_common,
   [(NVIC_IRQ_PENDSV + 1) ... (15 + ARMV8M_PERIPHERAL_INTERRUPTS)]
                           = &exception_direct
+#endif
 };
