@@ -73,29 +73,29 @@
 #define RP23XX_IO_BANK0_GPIO_STATUS_OUTTOPAD                            (1 << 9)   /* output signal to pad after register override is applied */
 
 #define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT                         (28)
-#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_MASK                          (0x03 << RP23XX_IO_BANK0_GPIO0_CTRL_IRQOVER_SHIFT)
-#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_NORMAL                        (0x0 << RP23XX_IO_BANK0_GPIO0_CTRL_IRQOVER_SHIFT)  /* don't invert the interrupt */
-#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_INVERT                        (0x1 << RP23XX_IO_BANK0_GPIO0_CTRL_IRQOVER_SHIFT)  /* invert the interrupt */
-#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_LOW                           (0x2 << RP23XX_IO_BANK0_GPIO0_CTRL_IRQOVER_SHIFT)  /* drive interrupt low */
-#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_HIGH                          (0x3 << RP23XX_IO_BANK0_GPIO0_CTRL_IRQOVER_SHIFT)  /* drive interrupt high */
+#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_MASK                          (0x03 << RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT)
+#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_NORMAL                        (0x0 << RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT)  /* don't invert the interrupt */
+#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_INVERT                        (0x1 << RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT)  /* invert the interrupt */
+#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_LOW                           (0x2 << RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT)  /* drive interrupt low */
+#define RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_HIGH                          (0x3 << RP23XX_IO_BANK0_GPIO_CTRL_IRQOVER_SHIFT)  /* drive interrupt high */
 #define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_SHIFT                          (16)
-#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_MASK                           (0x03 << RP23XX_IO_BANK0_GPIO0_CTRL_INOVER_SHIFT)
-#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_NORMAL                         (0x0 << RP23XX_IO_BANK0_GPIO0_CTRL_INOVER_SHIFT)  /* don't invert the peri input */
-#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_INVERT                         (0x1 << RP23XX_IO_BANK0_GPIO0_CTRL_INOVER_SHIFT)  /* invert the peri input */
-#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_LOW                            (0x2 << RP23XX_IO_BANK0_GPIO0_CTRL_INOVER_SHIFT)  /* drive peri input low */
-#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_HIGH                           (0x3 << RP23XX_IO_BANK0_GPIO0_CTRL_INOVER_SHIFT)  /* drive peri input high */
+#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_MASK                           (0x03 << RP23XX_IO_BANK0_GPIO_CTRL_INOVER_SHIFT)
+#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_NORMAL                         (0x0 << RP23XX_IO_BANK0_GPIO_CTRL_INOVER_SHIFT)  /* don't invert the peri input */
+#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_INVERT                         (0x1 << RP23XX_IO_BANK0_GPIO_CTRL_INOVER_SHIFT)  /* invert the peri input */
+#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_LOW                            (0x2 << RP23XX_IO_BANK0_GPIO_CTRL_INOVER_SHIFT)  /* drive peri input low */
+#define RP23XX_IO_BANK0_GPIO_CTRL_INOVER_HIGH                           (0x3 << RP23XX_IO_BANK0_GPIO_CTRL_INOVER_SHIFT)  /* drive peri input high */
 #define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_SHIFT                          (14)
-#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_MASK                           (0x03 << RP23XX_IO_BANK0_GPIO0_CTRL_OEOVER_SHIFT)
-#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_NORMAL                         (0x0 << RP23XX_IO_BANK0_GPIO0_CTRL_OEOVER_SHIFT)  /* drive output enable from peripheral signal selected by funcsel */
-#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_INVERT                         (0x1 << RP23XX_IO_BANK0_GPIO0_CTRL_OEOVER_SHIFT)  /* drive output enable from inverse of peripheral signal selected by funcsel */
-#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_DISABLE                        (0x2 << RP23XX_IO_BANK0_GPIO0_CTRL_OEOVER_SHIFT)  /* disable output */
-#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_ENABLE                         (0x3 << RP23XX_IO_BANK0_GPIO0_CTRL_OEOVER_SHIFT)  /* enable output */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_MASK                           (0x03 << RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_SHIFT)
+#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_NORMAL                         (0x0 << RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_SHIFT)  /* drive output enable from peripheral signal selected by funcsel */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_INVERT                         (0x1 << RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_SHIFT)  /* drive output enable from inverse of peripheral signal selected by funcsel */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_DISABLE                        (0x2 << RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_SHIFT)  /* disable output */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_ENABLE                         (0x3 << RP23XX_IO_BANK0_GPIO_CTRL_OEOVER_SHIFT)  /* enable output */
 #define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT                         (12)
-#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_MASK                          (0x03 << RP23XX_IO_BANK0_GPIO0_CTRL_OUTOVER_SHIFT)
-#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_NORMAL                        (0x0 << RP23XX_IO_BANK0_GPIO0_CTRL_OUTOVER_SHIFT)  /* drive output from peripheral signal selected by funcsel */
-#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_INVERT                        (0x1 << RP23XX_IO_BANK0_GPIO0_CTRL_OUTOVER_SHIFT)  /* drive output from inverse of peripheral signal selected by funcsel */
-#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_LOW                           (0x2 << RP23XX_IO_BANK0_GPIO0_CTRL_OUTOVER_SHIFT)  /* drive output low */
-#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_HIGH                          (0x3 << RP23XX_IO_BANK0_GPIO0_CTRL_OUTOVER_SHIFT)  /* drive output high */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_MASK                          (0x03 << RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT)
+#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_NORMAL                        (0x0 << RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT)  /* drive output from peripheral signal selected by funcsel */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_INVERT                        (0x1 << RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT)  /* drive output from inverse of peripheral signal selected by funcsel */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_LOW                           (0x2 << RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT)  /* drive output low */
+#define RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_HIGH                          (0x3 << RP23XX_IO_BANK0_GPIO_CTRL_OUTOVER_SHIFT)  /* drive output high */
 #define RP23XX_IO_BANK0_GPIO_CTRL_FUNCSEL_MASK                          (0x1f)
 #define RP23XX_IO_BANK0_GPIO_CTRL_FUNCSEL_HSTX                          (0x0)
 #define RP23XX_IO_BANK0_GPIO_CTRL_FUNCSEL_SPI                           (0x1)
