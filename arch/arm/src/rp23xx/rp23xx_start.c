@@ -96,7 +96,11 @@ void __start(void)
    * with writable registers: 5, 6, 7, 10, 11, and 18 through 31.
    */
 
-  const uint8_t safe_spinlocks[] =
+  /* This table must not be on the stack: this function changes the stack
+   * pointer below, and the table is read after that.
+   */
+
+  static const uint8_t safe_spinlocks[] =
   {
     5,  6,  7,  10, 11, 18, 19,
     20, 21, 22, 23, 24, 25, 26,
